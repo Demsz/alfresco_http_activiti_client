@@ -1,0 +1,18 @@
+*.class
+.idea
+.DS_Store
+*.log
+*.log*
+.classpath
+.project
+.settings/
+target/
+bin/
+alf_data_dev/
+*/alf_data_dev/**/*
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.iml
