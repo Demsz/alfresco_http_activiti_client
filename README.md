@@ -33,7 +33,9 @@ In case the arguments don't apply to your call (in general this may happen for c
 ## activiti
 This js root object allows to start workflows on a remote instance of Activiti Enterprise standalone. In particular it has the following public methods:
 
+```java
 - public ScriptableObject startProcess(String processName, String name, ScriptableObject scriptableObject)
+```
 
 We leverage the process name (for example 'my workflow') and not the process id (for example 'my workflow:12:12593') cause we find it in general much more useful and adapted to the real usage, where javascript rules should remain unchanged even if our workflow suffers modifications for example. So internally the implementation searches for the actual process definition deployed with the given process name. the first one found is the one used when calling the start of the workflow.
 
