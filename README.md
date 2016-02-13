@@ -8,19 +8,20 @@ This extension to the repository adds 2 javascript root objects:
 ## Configuration
 After applying the amp you need to set some configuration on the alfrescop-global.properties file if you intend to use the activiti root object (no configuration required if you just want to use the http root object):
 
-activiti.client.extension.endpoint=http://&lt;activiti-server&gt;:&lt;activiti-port&gt;/activiti-app
-
-activiti.client.extension.user=&lt;activiti-user&gt;
-
-activiti.client.extension.password=&lt;activiti-password&gt;
+```
+activiti.client.extension.endpoint=http://<activiti-server>:<activiti-port>/activiti-app
+activiti.client.extension.user=<activiti-user>
+activiti.client.extension.password=<activiti-password>
+```
 
 ## http
 This js root object allows to call remote HTTP API. In particular it has the following public methods:
-
+```java
 - public String get(String urlString)
 - public String get(String urlString, String user, String password)
 - public String post(String urlString, String content,String contentType, String user, String password)
 - public String execute(String urlString, String content,String contentType, String httpMethod, String user, String password)
+```
 
 The content variable on methods before refers to the payload of the request.
 
@@ -42,7 +43,15 @@ The ScriptableObject argument would be just any json containing the values for y
 
 The ScriptableObject returned by the method would correspond again to a json object containing the response received from Activiti and including details about the process instance started. For example:
 
+```javascript
 {"tenantId": "tenant_1", "processDefinitionVersion": 12, "startedBy": {"id": 1000, "lastName": "Fernandes", "email": null, "firstName": "Rui", "externalId": "rui"}, "startFormDefined": false, "businessKey": null, "processDefinitionCategory": "http:\/\/www.activiti.org\/processdef", "ended": null, "variables": [], "id": "12612", "processDefinitionDescription": null, "processDefinitionKey": "FOI-1", "processDefinitionDeploymentId": "12580", "name": "test", "started": "2016-02-13T02:03:57.932+0000", "processDefinitionName": "FOI-1", "graphicalNotationDefined": true, "processDefinitionId": "FOI-1:12:12593"}
+```
 
+An example of a script using the activiti js root object:
+
+```javascript
+var obj=eval('({"name":"'+document.properties['foi:number']+'"})');
+activiti.startProcess("FOI-1",document.name,obj);
+```
 
 
