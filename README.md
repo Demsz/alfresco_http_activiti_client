@@ -59,3 +59,10 @@ activiti.startProcess("FOI-1",document.name,obj);
 ```
 
 In case of the second method allows to start a workflow for a certain document. This would correspond to the last document argument passed to the method. It also expects to be specified which field would correspond to the attched document on the workflow start form. This is specified by the argument documentPropertyName with the name of the field.
+
+Example:
+
+```javascript
+var obj=eval('({"name":"'+document.properties['foi:number']+'"})');
+activiti.startDocumentProcess("FOI-1",document.name,obj,"documents",document);
+```
