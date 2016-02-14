@@ -35,6 +35,8 @@ This js root object allows to start workflows on a remote instance of Activiti E
 
 ```java
 - public ScriptableObject startProcess(String processName, String name, ScriptableObject scriptableObject)
+- public ScriptableObject startDocumentProcess(String processName, String name, ScriptableObject scriptableObject,
+	        String documentPropertyName, ScriptNode document)
 ```
 
 We leverage the process name (for example 'my workflow') and not the process id (for example 'my workflow:12:12593') cause we find it in general much more useful and adapted to the real usage, where javascript rules should remain unchanged even if our workflow suffers modifications for example. So internally the implementation searches for the actual process definition deployed with the given process name. the first one found is the one used when calling the start of the workflow.
@@ -56,4 +58,4 @@ var obj=eval('({"name":"'+document.properties['foi:number']+'"})');
 activiti.startProcess("FOI-1",document.name,obj);
 ```
 
-
+In case of the second method allows to start a workflow for a certain document. This would correspond to the last document argument passed to the method. It also expects to be specified which field would correspond to the attched document on the workflow start form. This is specified by the argument documentPropertyName with the name of the field.
