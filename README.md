@@ -40,7 +40,7 @@ This js root object allows to start workflows on a remote instance of Activiti E
 ```java
 - public ScriptableObject startProcess(String processName, String name, ScriptableObject scriptableObject)
 - public ScriptableObject startDocumentProcess(String processName, String name, ScriptableObject scriptableObject,
-	        String documentPropertyName, ScriptNode document)
+	        String[] documentPropertyNames, ScriptNode[] documents)
 - public void saveLocalDocument(int activitiContentId, String documentName, ScriptNode parent,String mimeType)
 ```
 
@@ -71,5 +71,5 @@ Example:
 
 ```javascript
 var obj=eval('({"name":"'+document.properties['foi:number']+'"})');
-activiti.startDocumentProcess("FOI-1",document.name,obj,"documents",document);
+activiti.startDocumentProcess("FOI-1",document.name,obj,["documents"],[document]);
 ```
