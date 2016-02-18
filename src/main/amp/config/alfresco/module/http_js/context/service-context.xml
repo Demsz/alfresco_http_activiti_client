@@ -32,6 +32,7 @@
         <property name="activitiEndpoint" value="${activiti.client.extension.endpoint}"/>
         <property name="user" value="${activiti.client.extension.user}"/>
         <property name="password" value="${activiti.client.extension.password}"/>
+        <property name="contentService" ref="ContentService"/>
     </bean>
 
 </beans>

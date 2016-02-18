@@ -24,16 +24,32 @@ public class HttpRequest extends BaseProcessorExtension
 	{
 		return execute(urlString, null,null, GET, null, null);
 	}
+	
+	public InputStream getStream(String urlString) throws IOException
+	{
+		return executeGetStream(urlString, null,null, GET, null, null);
+	}
 
 	public String get(String urlString, String name, String password) throws IOException
 	{
 		return execute(urlString, null,null, GET, name, password);
+	}
+	
+	
+	public InputStream getStream(String urlString, String name, String password) throws IOException
+	{
+		return executeGetStream(urlString, null,null, GET, name, password);
 	}
 
 
 	public String post(String urlString, String content,String contentType, String name, String password) throws IOException
 	{
 		return execute(urlString, content, contentType, POST, name, password);
+	}
+	
+	public InputStream postStream(String urlString, String content,String contentType, String name, String password) throws IOException
+	{
+		return executeGetStream(urlString, content, contentType, POST, name, password);
 	}
 
 	public String execute(String urlString, String content,String contentType, String httpMethod, String name, String password)
@@ -53,6 +69,25 @@ public class HttpRequest extends BaseProcessorExtension
 			urlConnection.setDoOutput(false);
 
 		return sendRequest(urlConnection);
+	}
+	
+	public InputStream executeGetStream(String urlString, String content,String contentType, String httpMethod, String name, String password)
+	        throws IOException
+	{
+		HttpURLConnection urlConnection = buildConnection(urlString, httpMethod);
+		if (name != null && password != null)
+		{
+			setHttpBasicAuthentication(urlConnection, name, password);
+		}
+
+		if (POST.equals(httpMethod) && content != null && content.length() > 0)
+		{
+			urlConnection.setDoOutput(true);
+			writeRequestContent(urlConnection, content,contentType);
+		} else
+			urlConnection.setDoOutput(false);
+
+		return sendRequestGetStream(urlConnection);
 	}
 
 	private static void writeRequestContent(HttpURLConnection urlConnection, String content,String contentType) throws IOException
@@ -88,12 +123,18 @@ public class HttpRequest extends BaseProcessorExtension
 
 	private static String sendRequest(HttpURLConnection urlConnection) throws IOException
 	{
+		
+		return readResponse(sendRequestGetStream(urlConnection));
+	}
+	
+	private static InputStream sendRequestGetStream(HttpURLConnection urlConnection) throws IOException
+	{
 		int responseCode = urlConnection.getResponseCode();
 		if (responseCode != 200)
 		{
 			throw new IOException("RESPONSE CODE:" + responseCode + "\n" + urlConnection.getResponseMessage());
 		}
-		return readResponse(urlConnection.getInputStream());
+		return urlConnection.getInputStream();
 	}
 
 	private static HttpURLConnection buildConnection(String urlString, String httpMethod) throws IOException

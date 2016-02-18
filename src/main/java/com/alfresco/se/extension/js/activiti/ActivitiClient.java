@@ -1,10 +1,17 @@
 package com.alfresco.se.extension.js.activiti;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.processor.BaseProcessorExtension;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -28,6 +35,12 @@ public class ActivitiClient extends BaseProcessorExtension
 	private String user;
 	private String password;
 	private String alfrescoActivitiRepositoryId = "alfresco-1";
+	private ContentService contentService;
+
+	public void setContentService(ContentService contentService)
+	{
+		this.contentService = contentService;
+	}
 
 	public ScriptableObject startProcess(String processName, String name, ScriptableObject scriptableObject)
 	        throws JSONException, IOException
@@ -56,7 +69,7 @@ public class ActivitiClient extends BaseProcessorExtension
 
 		if (documentPropertyName != null)
 		{
-			values.put(documentPropertyName,documentId);
+			values.put(documentPropertyName, documentId);
 		}
 
 		json.put("name", name);
@@ -134,28 +147,110 @@ public class ActivitiClient extends BaseProcessorExtension
 	{
 		this.alfrescoActivitiRepositoryId = alfrescoActivitiRepositoryId;
 	}
+	
+	
+	public void saveLocalDocument(int activitiContentId, String documentName, ScriptNode parent,String mimeType) throws IOException{
+		HttpRequest request = new HttpRequest();
+		InputStream response = null;
+		OutputStream outputStream = null;
+		try
+		{
+			response = request.getStream(activitiEndpoint+"/api/enterprise/content/"+activitiContentId+"/raw",
+			       user, password);
+			ScriptNode doc=parent.createFile(documentName);
+			ContentWriter writer=contentService.getWriter(doc.getNodeRef(),ContentModel.PROP_CONTENT,true);
+			if(mimeType!=null)
+				writer.setMimetype(mimeType);
+			outputStream=writer.getContentOutputStream();
+
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			while ((read = response.read(bytes)) != -1)
+			{
+				outputStream.write(bytes, 0, read);
+			}
+		} finally
+		{
+			if (response != null)
+				try
+				{
+					response.close();
+				} catch (Exception e1)
+				{
+				}
+			if (outputStream != null)
+				try
+				{
+					outputStream.close();
+				} catch (Exception e1)
+				{
+				}
+		}
+	}
 
 	public static void main(String[] args)
 	{
 		ActivitiClient client = new ActivitiClient();
-		JSONUtils jsonUtils = new JSONUtils();
+		client.setActivitiEndpoint("http://192.168.99.223:9090/activiti-app");
+		client.setUser("rui");
+		client.setPassword("rui");
+
 		try
 		{
-			client.setActivitiEndpoint("http://192.168.99.223:9090/activiti-app");
-			client.setUser("rui");
-			client.setPassword("rui");
-			ScriptableObject response = client.startProcess("FOI-1", "test",
-			        jsonUtils.toObject("{\"name\":\"xpto test\"}"));
-			System.out.println(jsonUtils.toJSONString(response));
+			/*
+			 * JSONUtils jsonUtils = new JSONUtils(); ScriptableObject response
+			 * = client.startProcess("FOI-1", "test",
+			 * jsonUtils.toObject("{\"name\":\"xpto test\"}"));
+			 * System.out.println(jsonUtils.toJSONString(response));
+			 * 
+			 * System.out.println("----------");
+			 * 
+			 * String documentId = client.postContent("Lung Cancer Form.docx",
+			 * "35b0a09b-bee1-4b1e-b922-b8af269f3153", "dwp-foi",
+			 * "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+			 * ); System.out.println("content posted id=" + documentId);
+			 * response = client.start("FOI-1", "test",
+			 * jsonUtils.toObject("{\"name\":\"xpto test\"}"), "documents",
+			 * documentId);
+			 * System.out.println(jsonUtils.toJSONString(response));
+			 */
+			HttpRequest request = new HttpRequest();
+			InputStream response = null;
+			OutputStream outputStream = null;
+			try
+			{
+				response = request.getStream("http://192.168.99.223:9090/activiti-app/api/enterprise/content/9024/raw",
+				        "rui", "rui");
 
-			System.out.println("----------");
+				outputStream = new FileOutputStream(new File("test.docx"));
 
-			String documentId = client.postContent("Lung Cancer Form.docx", "35b0a09b-bee1-4b1e-b922-b8af269f3153",
-			        "dwp-foi", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-			System.out.println("content posted id=" + documentId);
-			response = client.start("FOI-1", "test", jsonUtils.toObject("{\"name\":\"xpto test\"}"), "documents",
-			        documentId);
-			System.out.println(jsonUtils.toJSONString(response));
+				int read = 0;
+				byte[] bytes = new byte[1024];
+
+				while ((read = response.read(bytes)) != -1)
+				{
+					outputStream.write(bytes, 0, read);
+				}
+			} finally
+			{
+				if (response != null)
+					try
+					{
+						response.close();
+					} catch (Exception e1)
+					{
+					}
+				if (outputStream != null)
+					try
+					{
+						outputStream.close();
+					} catch (Exception e1)
+					{
+					}
+			}
+
+			System.out.println("Done!");
 
 		} catch (Exception e)
 		{
