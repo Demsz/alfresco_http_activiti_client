@@ -49,27 +49,25 @@ public class ActivitiClient extends BaseProcessorExtension
 	}
 
 	public ScriptableObject startDocumentProcess(String processName, String name, ScriptableObject scriptableObject,
-	        String documentPropertyName, ScriptNode document) throws JSONException, IOException
+	        String[] documentPropertyNames, ScriptNode[] documents) throws JSONException, IOException
 	{
-		String documentId = null;
-		if (document != null && documentPropertyName != null)
-		{
-			documentId = postContent(document);
+		String[] documentIds = new String[documents.length];
+		for(int i=documents.length;i>0;i--){
+			documentIds[i-1]=postContent(documents[i-1]);
 		}
-		return start(processName, name, scriptableObject, documentPropertyName, documentId);
+		return start(processName, name, scriptableObject, documentPropertyNames, documentIds);
 	}
 
 	@SuppressWarnings("unchecked")
 	private ScriptableObject start(String processName, String name, ScriptableObject scriptableObject,
-	        String documentPropertyName, String documentId) throws IOException, JSONException
+	        String[] documentPropertyNames, String[] documentIds) throws IOException, JSONException
 	{
 		JSONObject json = new JSONObject();
 		JSONUtils jsonUtils = new JSONUtils();
 		org.json.simple.JSONObject values = jsonUtils.toJSONObject(scriptableObject);
 
-		if (documentPropertyName != null)
-		{
-			values.put(documentPropertyName, documentId);
+		for(int i=documentPropertyNames.length;i>0;i--){
+			values.put(documentPropertyNames[i-1], documentIds[i-1]);
 		}
 
 		json.put("name", name);
