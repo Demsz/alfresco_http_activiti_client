@@ -1,0 +1,2 @@
+var obj=eval('({"assignee":{"id":1},"duedate":"2018-05-21T00:00:00.000Z","taskdescription":"my adhoc task description","message":"my adhoc task message"})');
+activiti.startDocumentProcess("Ad hoc Task","my workflow instance name",obj,["content"],[document]);
