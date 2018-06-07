@@ -130,7 +130,7 @@ public class HttpRequest extends BaseProcessorExtension
 	private static InputStream sendRequestGetStream(HttpURLConnection urlConnection) throws IOException
 	{
 		int responseCode = urlConnection.getResponseCode();
-		if (responseCode != 200)
+		if (responseCode >= 400)
 		{
 			throw new IOException("RESPONSE CODE:" + responseCode + "\n" + urlConnection.getResponseMessage());
 		}
