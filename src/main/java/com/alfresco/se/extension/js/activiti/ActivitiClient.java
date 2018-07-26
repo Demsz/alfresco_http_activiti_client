@@ -51,6 +51,11 @@ public class ActivitiClient extends BaseProcessorExtension
 	public ScriptableObject startDocumentProcess(String processName, String name, ScriptableObject scriptableObject,
 	        String[] documentPropertyNames, ScriptNode[] documents) throws JSONException, IOException
 	{
+		if(documents==null)
+			documents=new ScriptNode[0];
+		if(documentPropertyNames==null)
+			documentPropertyNames=new String[0];
+		
 		String[] documentIds = new String[documents.length];
 		for(int i=documents.length;i>0;i--){
 			documentIds[i-1]=postContent(documents[i-1]);
