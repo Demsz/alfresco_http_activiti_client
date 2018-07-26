@@ -95,7 +95,7 @@ public class ActivitiClient extends BaseProcessorExtension
 		JSONObject json = new JSONObject();
 		JSONUtils jsonUtils = new JSONUtils();
 		json.put("name", documentName);
-		json.put("link", true);
+		json.put("link", false);
 		json.put("source", alfrescoActivitiRepositoryId);
 		json.put("sourceId", documentId + "@" + siteShortName);
 		json.put("mimeType", mimeType);
