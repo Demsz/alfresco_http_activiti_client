@@ -77,7 +77,11 @@ public class ActivitiClient extends BaseProcessorExtension
 
 		json.put("name", name);
 		json.put("values", values);
-		json.put("processDefinitionId", getProcessDefinitionId(processName));
+		String processDefinitionId=getProcessDefinitionId(processName);
+		if(processDefinitionId==null){
+			throw new RuntimeException("No process found with name \""+processName+"\".");
+		}
+		json.put("processDefinitionId", processDefinitionId);
 		HttpRequest request = new HttpRequest();
 		String httpUrl = activitiEndpoint + "/api/enterprise/process-instances";
 
